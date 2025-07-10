@@ -1,2 +1,5 @@
 # Database
-metrics/storage/database.db
+/metric_service/server/database.db
+
+# VSCode
+.vscode
