@@ -1,5 +1,8 @@
-# Database
-/metric_service/server/database.db
-
 # VSCode
 .vscode
+
+# Database
+database.db
+
+# Cache
+__pycache__
