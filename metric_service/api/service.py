@@ -1,10 +1,14 @@
 # import flask module
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 
 # instance of flask application
 app = Flask(__name__)
 
 latest_data = []
+
+@app.route('/')
+def main_page():
+    return render_template('index.html')
 
 @app.route("/receive", methods=['POST'])
 def receive():
