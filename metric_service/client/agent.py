@@ -5,7 +5,8 @@ import json
 import sys
 from time import sleep
 
-connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
+connection = pika.BlockingConnection(
+                pika.ConnectionParameters(host='localhost'))
 channel = connection.channel()
 
 channel.queue_declare(queue='metrics')
@@ -15,7 +16,8 @@ for _ in range(100):
     'CPU': psutil.cpu_count(),
     'Virtual Memory': psutil.virtual_memory().total,
     'Used RAM': round(psutil.virtual_memory().percent,2),
-    'Memory Left': round(psutil.virtual_memory().available * 100 / psutil.virtual_memory().total,2)
+    'Memory Left': round(psutil.virtual_memory().available * 100 / 
+                         psutil.virtual_memory().total,2)
     }
     metrics_json = json.dumps(metrics)
 
