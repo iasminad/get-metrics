@@ -1,12 +1,16 @@
 #!/usr/bin/env python
-import pika, sys, os
+import pika
+import sys
+import os
 import json
 from time import sleep
 import requests
+import threading
 
-def main():
+def consume_messages():
     connection = pika.BlockingConnection(
-                    pika.ConnectionParameters(host='localhost'))
+        pika.ConnectionParameters(host='rabbitmq')  
+    )
     channel = connection.channel()
 
     channel.queue_declare(queue='metrics')
@@ -17,20 +21,30 @@ def main():
         data = json.loads(body)
         print(json.dumps(data, indent=2))
 
-        res = requests.post(
-                "http://127.0.0.1:8001/receive", 
-                headers={"Content-Type": "application/json"}, 
+        try:
+            res = requests.post(
+                "http://web:8000/receive",  
+                headers={"Content-Type": "application/json"},
                 data=json.dumps(data)
-        )
-        print(json.dumps(data, indent=2))
-        
+            )
+            print(f"Status: {res.status_code}")
+        except requests.exceptions.RequestException as e:
+            print(f"Error posting to web service: {e}")
+
         sys.stdout.flush()
         ch.basic_ack(delivery_tag=method.delivery_tag)
 
-    channel.basic_consume(queue='metrics', on_message_callback=callback, auto_ack=False)
-    
-    # print(' [*] Waiting for messages. To exit press CTRL+C')
+    channel.basic_consume(queue='metrics', on_message_callback=callback, 
+                          auto_ack=False)
+    print(" [*] Waiting for messages. To exit press CTRL+C")
     channel.start_consuming()
+
+def main():
+    sleep(10)  
+
+    thread = threading.Thread(target=consume_messages)
+    thread.start()
+    thread.join()  # keep main thread alive
 
 if __name__ == '__main__':
     try:

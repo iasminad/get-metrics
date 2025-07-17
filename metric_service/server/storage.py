@@ -2,7 +2,7 @@ import sqlite3
 import requests
 
 def call_api():
-    response_API = requests.get('http://127.0.0.1:8001/show')
+    response_API = requests.get('http://127.0.0.1:8000/show')
     data = response_API.json()
 
     connection = sqlite3.connect("database.db")

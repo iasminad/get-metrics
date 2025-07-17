@@ -15,7 +15,7 @@ def receive():
     # global latest_data
     data = request.get_json()
     latest_data.append(data)
-    return jsonify(data)
+    return jsonify(data) 
 
 @app.route("/show", methods=['GET'])
 def show_data():
@@ -25,4 +25,4 @@ def show_data():
         return jsonify({"message": "No data received yet"})
 
 if __name__ == '__main__':
-    app.run(debug=True, port=8001)
+    app.run(debug=True, host='0.0.0.0', port=8000)

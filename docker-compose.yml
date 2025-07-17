@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  rabbitmq:
+    image: rabbitmq:4.1-management
+    ports:
+      - "5673:5672"      # AMQP port
+      - "15673:15672"    # Management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - FLASK_APP=api.service
+      - RABBITMQ_HOST=rabbitmq  # Changed from localhost to rabbitmq
+      - RABBITMQ_QUEUE=metrics
+    command: flask run --host=0.0.0.0 --port=8000 --debug
+    volumes:
+      - ./metric_service:/metric_service
+    depends_on:
+      - rabbitmq
+
+  collector:
+    build: .
+    command: python3 server/collector.py
+    volumes:
+      - ./metric_service:/metric_service
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_QUEUE=metrics
+    depends_on:
+      - rabbitmq
+
+  agent:
+    build: .
+    command: python3 client/agent.py
+    volumes:
+      - ./metric_service:/metric_service
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_QUEUE=metrics
+    depends_on:
+      - rabbitmq
