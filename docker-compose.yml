@@ -45,3 +45,13 @@ services:
       - RABBITMQ_QUEUE=metrics
     depends_on:
       - rabbitmq
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    ports:
+      - "9090:9090"

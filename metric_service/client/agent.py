@@ -14,7 +14,7 @@ def send_metrics():
     channel = connection.channel()
     channel.queue_declare(queue='metrics')
 
-    for _ in range(100):  
+    for _ in range(10):  
         metrics = {
             'CPU': psutil.cpu_count(),
             'Virtual Memory': psutil.virtual_memory().total,
