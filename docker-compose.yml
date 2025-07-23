@@ -2,21 +2,43 @@ version: '3.8'
 
 services:
   rabbitmq:
-    image: rabbitmq:4.1-management
+    image: rabbitmq:3.9-management
+    hostname: rabbitmq
     ports:
-      - "5673:5672"      # AMQP port
-      - "15673:15672"    # Management UI
+      - "5673:5672"     
+      - "15673:15672"   
+      - "15693:15692"   
     environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
+      - RABBITMQ_ERLANG_COOKIE=secret_cookie
+      - RABBITMQ_PLUGINS_ENABLED=rabbitmq_prometheus
 
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    # networks:
+    #   - monitoring
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - '3000:3000'
+    container_name: grafana
+    # restart: unless-stopped
+    depends_on:
+      - prometheus
   web:
     build: .
     ports:
       - "8000:8000"
+    # networks:
+    #   - monitoring
     environment:
       - FLASK_APP=api.service
-      - RABBITMQ_HOST=rabbitmq  # Changed from localhost to rabbitmq
+      - RABBITMQ_HOST=rabbitmq 
       - RABBITMQ_QUEUE=metrics
     command: flask run --host=0.0.0.0 --port=8000 --debug
     volumes:
@@ -46,12 +68,6 @@ services:
     depends_on:
       - rabbitmq
 
-  prometheus:
-    image: prom/prometheus:latest
-    container_name: prometheus
-    volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-    ports:
-      - "9090:9090"
+# networks:
+#   monitoring:
+#     driver: bridge

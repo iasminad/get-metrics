@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 import pika
 import sys
 import os
@@ -44,7 +43,7 @@ def main():
 
     thread = threading.Thread(target=consume_messages)
     thread.start()
-    thread.join()  # keep main thread alive
+    thread.join() 
 
 if __name__ == '__main__':
     try:

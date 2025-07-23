@@ -27,7 +27,6 @@
           const table = document.createElement('table');
           const keys = Object.keys(json.Data[0]);
           
-          // Table Header
           const header = table.insertRow();
           keys.forEach(key => {
             const th = document.createElement('th');
@@ -35,7 +34,6 @@
             header.appendChild(th);
           });
 
-          // Table Rows
           json.Data.forEach(entry => {
             const row = table.insertRow();
             keys.forEach(key => {
@@ -56,7 +54,7 @@
     }
 
     loadMetrics();
-    setInterval(loadMetrics, 2000);  // Refresh every 2 seconds
+    setInterval(loadMetrics, 2000);
   </script>
 </body>
 </html>

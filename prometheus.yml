@@ -1,8 +1,16 @@
 global:
   scrape_interval: 15s
   evaluation_interval: 15s
+
 scrape_configs:
   - job_name: 'prometheus'
-    scrape_interval: 5s
+    # metrics_path: /metrics
     static_configs:
-      - targets: ['localhost:9090']
+      - targets: ['prometheus:9090']
+    scrape_timeout: 10s
+
+  - job_name: 'flask_web'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['web:8000']
+    scrape_timeout: 10s

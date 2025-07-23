@@ -1,9 +1,7 @@
-#!/usr/bin/env python
 import pika
 import psutil
 import json
 import sys
-import os
 from time import sleep
 import threading
 
