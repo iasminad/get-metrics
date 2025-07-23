@@ -1,13 +1,13 @@
 import json
 import pytest
-from service import app, latest_data
+import service as app
 
 
 @pytest.fixture
 def client():
     app.config['TESTING'] = True
     with app.test_client() as client:
-        latest_data.clear()
+        app.latest_data.clear()
         yield client
 
 
@@ -22,11 +22,11 @@ def test_receive_post(client):
                            content_type='application/json')
     assert response.status_code == 200
     assert response.get_json() == payload
-    assert latest_data[-1] == payload
+    assert app.latest_data[-1] == payload
 
 
 def test_show_data_with_content(client):
-    latest_data.append({"CPU": 1}) 
+    app.latest_data.append({"CPU": 1}) 
     response = client.get("/show")
     assert response.status_code == 200
     data = response.get_json()
@@ -42,7 +42,7 @@ def test_show_data_without_content(client):
 
 
 def test_metrics_returns_prometheus_format(client):
-    latest_data.append({
+    app.latest_data.append({
         "CPU": 2,
         "Virtual Memory": 1234567890,
         "Used RAM": 70.0,

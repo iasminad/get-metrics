@@ -1,8 +1,10 @@
 # VSCode
 .vscode
+.tox
 
 # Database
 database.db
 
 # Cache
 __pycache__
+.pytest_cache
