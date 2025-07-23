@@ -3,3 +3,4 @@ pika
 psutil
 requests
 prometheus_client
+pytest==7.2.2
