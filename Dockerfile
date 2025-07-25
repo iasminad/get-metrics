@@ -1,4 +1,4 @@
-FROM ubuntu:22.04 
+FROM python:3.10-slim
 
 WORKDIR /metric_service
 
@@ -12,7 +12,4 @@ RUN python3 -m pip install -r requirements.txt
 
 COPY metric_service /metric_service
 
-ENV FLASK_APP=api.service
-
-EXPOSE 8000 9090
-CMD ["flask", "run", "--host=0.0.0.0", "--port=8000", "--debug"]
+EXPOSE 8000

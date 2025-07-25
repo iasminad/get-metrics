@@ -1,15 +1,14 @@
 import pytest
 import json
-from unittest.mock import patch, MagicMock
+from unittest import mock
+from metric_service.server import collector
 
-import collector
 
-
-@patch('collector.requests.post')
-@patch('collector.pika.BlockingConnection')
+@mock.patch('metric_service.server.collector.requests.post')
+@mock.patch('metric_service.server.collector.pika.BlockingConnection')
 def test_consume_messages(mock_pika, mock_post):
-    mock_channel = MagicMock()
-    mock_connection = MagicMock()
+    mock_channel = mock.MagicMock()
+    mock_connection = mock.MagicMock()
     mock_connection.channel.return_value = mock_channel
     mock_pika.return_value = mock_connection
 
@@ -30,7 +29,8 @@ def test_consume_messages(mock_pika, mock_post):
     mock_channel.basic_consume.side_effect = fake_basic_consume
 
     def fake_start_consuming():
-        callback_func(mock_channel, MagicMock(delivery_tag=123), None, body)
+        callback_func(
+                mock_channel, mock.MagicMock(delivery_tag=123), None, body)
 
     mock_channel.start_consuming.side_effect = fake_start_consuming
 
